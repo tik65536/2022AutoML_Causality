@@ -1,2 +1,13 @@
 slurm-*
 catboost*/
+
+
+# .ipynb_checkpoints
+.ipynb_checkpoints
+
+# vscdoe setup
+.vscode
+
+# venv
+.venv*
+venv*
