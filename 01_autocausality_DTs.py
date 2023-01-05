@@ -7,7 +7,6 @@ from auto_causality.datasets import generate_synthetic_data
 # Decision Trees
 from sklearn import tree
 from sklearn.model_selection import train_test_split
-from sklearn.naive_bayes import GaussianNB
 
 # suppress sklearn deprecation warnings for now..
 warnings.filterwarnings('ignore')
