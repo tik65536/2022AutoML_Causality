@@ -1,3 +1,18 @@
 slurm-*
 catboost*/
+<<<<<<< HEAD
 core*
+=======
+*.out
+
+
+# .ipynb_checkpoints
+.ipynb_checkpoints
+
+# vscdoe setup
+.vscode
+
+# venv
+.venv*
+venv*
+>>>>>>> 030a392245d2e1db4f7396d2ecc712feb443740d
