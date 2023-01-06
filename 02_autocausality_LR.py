@@ -4,8 +4,8 @@ import warnings
 from auto_causality import AutoCausality
 from auto_causality.data_utils import preprocess_dataset
 from auto_causality.datasets import generate_synthetic_data
-# Decision Trees
-from sklearn import tree
+# LogisticRegression
+from sklearn.linear_model import LogisticRegression
 from sklearn.model_selection import train_test_split
 
 # suppress sklearn deprecation warnings for now..
@@ -17,7 +17,7 @@ test_size = 0.33  # equal train,val,test
 components_time_budget = 300
 estimator_list = "all"
 n_runs = 2
-out_dir = "./01_DTs/"
+out_dir = "./02_LR/"
 filename_out = "synthetic_observational_cate"
 
 
@@ -54,7 +54,7 @@ for i_run in range(1, n_runs+1):
     train_df, test_df = train_test_split(data_df, test_size=test_size)
     test_df = test_df.reset_index(drop=True)
     for metric in metrics:
-        clf_pf = tree.DecisionTreeClassifier()
+        clf_pf = LogisticRegression(random_state=0)
         ac = AutoCausality(
             metric=metric,
             verbose=1,

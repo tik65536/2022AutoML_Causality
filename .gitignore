@@ -1,5 +1,6 @@
 slurm-*
 catboost*/
+*.out
 
 
 # .ipynb_checkpoints
