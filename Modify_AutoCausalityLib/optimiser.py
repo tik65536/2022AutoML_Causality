@@ -23,6 +23,7 @@ from auto_causality.utils import clean_config, treatment_is_multivalue
 from auto_causality.models.monkey_patches import AutoML
 from auto_causality.models.Bayesian import Bayesian
 from auto_causality.models.SVM import SVM
+from auto_causality.models.GaussianProcess import gpClassifier
 from auto_causality.data_utils import CausalityDataset
 from auto_causality.models.passthrough import feature_filter
 
@@ -214,6 +215,11 @@ class AutoCausality:
                 **{**self._settings["component_models"], "task": "classification","estimator_list":['SVM']}
             )
             self.propensity_model.add_learner(learner_name='SVM', learner_class=SVM)
+        elif propensity_model == "gpc":
+            self.propensity_model = AutoML(
+                **{**self._settings["component_models"], "task": "classification","estimator_list":['GPC']}
+            )
+            self.propensity_model.add_learner(learner_name='GPC', learner_class=gpClassifier)
         elif hasattr(propensity_model, "fit") and hasattr(
             propensity_model, "predict_proba"
         ):

@@ -1,4 +1,5 @@
 import pickle
+
 import warnings
 warnings.filterwarnings('ignore') # suppress sklearn deprecation warnings for now..
 
@@ -11,7 +12,7 @@ test_size = 0.33 # equal train,val,test
 components_time_budget = 300
 estimator_list = "all"
 n_runs = 1
-out_dir = "./SVM/"
+out_dir = "./GPR/"
 filename_out = "synthetic_observational_cate"
 
 dataset = generate_synthetic_data(n_samples=n_samples, confounding=True, linear_confounder=True, noisy_outcomes=True)
@@ -34,7 +35,7 @@ for i_run in range(1,n_runs+1):
             components_time_budget=components_time_budget,
             estimator_list=estimator_list,
             store_all_estimators=True,
-            propensity_model="svm",
+            propensity_model="gpc",
         )
 
         ac.fit(

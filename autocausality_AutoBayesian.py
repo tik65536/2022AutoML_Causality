@@ -1,41 +1,26 @@
-import os
-import sys
 import pickle
-import numpy as np
-import pandas as pd
-import matplotlib.pyplot as plt
-import warnings
-from typing import Union
-import pymp
-
 import warnings
 warnings.filterwarnings('ignore') # suppress sklearn deprecation warnings for now..
 
 from sklearn.model_selection import train_test_split
-from sklearn.naive_bayes import GaussianNB
-from sklearn.dummy import DummyClassifier
 from auto_causality import AutoCausality
-from auto_causality.data_utils import preprocess_dataset
 from auto_causality.datasets import generate_synthetic_data
 metrics = ["norm_erupt", "qini","energy_distance"]
 n_samples = 10000
 test_size = 0.33 # equal train,val,test
 components_time_budget = 300
 estimator_list = "all"
-n_runs = 5
-out_dir = "./GaussianNB_2/"
+n_runs = 1
+out_dir = "./NaiveBayesian/"
 filename_out = "synthetic_observational_cate"
 
 dataset = generate_synthetic_data(n_samples=n_samples, confounding=True, linear_confounder=True, noisy_outcomes=True)
-#dataset.preprocess_dataset()
-#features_X=dataset.effect_modifiers
-#features_W=dataset.common_causes
-#data_df=dataset.data
-data_df, features_X, features_W = preprocess_dataset(
-    dataset.data, treatment=dataset.treatment, targets=dataset.outcomes
-)
+dataset.preprocess_dataset()
+features_X=dataset.effect_modifiers
+features_W=dataset.common_causes
+data_df=dataset.data
 # drop true effect:
-features_X = [f for f in features_X if f != "true_effect"]
+print('AutoML - NaiveBayesian',flush=True)
 print(f"features_X: {features_X}")
 print(f"features_W: {features_W}")
 
@@ -51,7 +36,7 @@ for i_run in range(1,n_runs+1):
             components_time_budget=components_time_budget,
             estimator_list=estimator_list,
             store_all_estimators=True,
-            propensity_model="gaussianNB",
+            propensity_model="bayesian",
         )
 
         ac.fit(
