@@ -22,7 +22,9 @@ class DTS(SKLearnEstimator):
     @classmethod
     def search_space(cls, data_size, task):
         space = {
-            'criterion': {'domain': tune.choice(['gini', 'entropy', 'log_loss']), 'init_value': 'entropy'},
+            # The log_loss option for the parameter criterion was added only in the latest scikit-learn version 1.1.2
+            # 'criterion': {'domain': tune.choice(['gini', 'entropy', 'log_loss']), 'init_value': 'entropy'},
+            'criterion': {'domain': tune.choice(['gini', 'entropy']), 'init_value': 'gini'},
             'splitter': {'domain': tune.choice(['best', 'random']), 'init_value': 'best'},
             'max_depth': {'domain': tune.choice([3, 5, 10, 15, 20]), 'init_value': 3},
             'random_state': {'domain': tune.choice([0, 10, 20, 30, 40]), 'init_value': 0},
