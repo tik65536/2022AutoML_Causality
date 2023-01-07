@@ -46,7 +46,6 @@ class DTS(SKLearnEstimator):
         X_train = self._preprocess(X_train)
         params = self.params
         del params['n_jobs']
-        params['probability'] = True
         params['max_iter'] = 1000
         model = self.estimator_class(**params)
         if logger.level == logging.DEBUG:
