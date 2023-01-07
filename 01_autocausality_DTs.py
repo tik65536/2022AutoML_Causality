@@ -16,7 +16,7 @@ n_samples = 10000
 test_size = 0.33  # equal train,val,test
 components_time_budget = 300
 estimator_list = "all"
-n_runs = 2
+n_runs = 1
 out_dir = "./01_DTs/"
 filename_out = "synthetic_observational_cate"
 
@@ -29,19 +29,12 @@ dataset = generate_synthetic_data(
     n_samples=n_samples,
     confounding=True,
     linear_confounder=True,
-    noisy_outcomes=True
-)
-# dataset.preprocess_dataset()
-# features_X=dataset.effect_modifiers
-# features_W=dataset.common_causes
-# data_df=dataset.data
-data_df, features_X, features_W = preprocess_dataset(
-    dataset.data,
-    treatment=dataset.treatment,
-    targets=dataset.outcomes
-)
-# drop true effect:
-features_X = [f for f in features_X if f != "true_effect"]
+    noisy_outcomes=True)
+
+dataset.preprocess_dataset()
+features_X = dataset.effect_modifiers
+features_W = dataset.common_causes
+data_df = dataset.data
 print(f"features_X: {features_X}")
 print(f"features_W: {features_W}")
 
@@ -54,7 +47,6 @@ for i_run in range(1, n_runs+1):
     train_df, test_df = train_test_split(data_df, test_size=test_size)
     test_df = test_df.reset_index(drop=True)
     for metric in metrics:
-        clf_pf = tree.DecisionTreeClassifier()
         ac = AutoCausality(
             metric=metric,
             verbose=1,
@@ -62,7 +54,7 @@ for i_run in range(1, n_runs+1):
             components_time_budget=components_time_budget,
             estimator_list=estimator_list,
             store_all_estimators=True,
-            propensity_model=clf_pf,
+            propensity_model='dts',
         )
 
         ac.fit(
@@ -75,9 +67,9 @@ for i_run in range(1, n_runs+1):
         # compute relevant scores (skip newdummy)
         datasets = {
             "train": ac.train_df,
-            "validation": ac.test_df, 
+            "validation": ac.test_df,
             "test": test_df
-            }
+        }
         # get scores on train,val,test for each trial,
         # sort trials by validation set performance
         # assign trials to estimators
