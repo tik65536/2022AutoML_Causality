@@ -26,8 +26,8 @@ class DTS(SKLearnEstimator):
             # 'criterion': {'domain': tune.choice(['gini', 'entropy', 'log_loss']), 'init_value': 'entropy'},
             'criterion': {'domain': tune.choice(['gini', 'entropy']), 'init_value': 'gini'},
             'splitter': {'domain': tune.choice(['best', 'random']), 'init_value': 'best'},
-            'max_depth': {'domain': tune.choice([3, 5, 10, 15, 20]), 'init_value': 3},
-            'random_state': {'domain': tune.choice([0, 10, 20, 30, 40]), 'init_value': 0},
+            'max_depth': {'domain': tune.choice([3, 5, 7, 10]), 'init_value': 3},
+            'random_state': {'domain': tune.choice([0, 10, 20, 30]), 'init_value': 0},
         }
         return space
 

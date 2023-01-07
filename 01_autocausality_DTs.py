@@ -56,6 +56,12 @@ for i_run in range(1, n_runs+1):
             store_all_estimators=True,
             propensity_model='dts',
         )
+        settings = {
+            "estimator_list": ['DTS'], # list of ML learners
+            "task": 'classification',  # task type    
+            "log_file_name": 'airlines_experiment_custom_learner.log',  # flaml log file 
+            "log_training_metric": True,  # whether to log training metric
+            }
 
         ac.fit(
             train_df,
@@ -63,6 +69,7 @@ for i_run in range(1, n_runs+1):
             outcome=["outcome"],
             common_causes=features_W,
             effect_modifiers=features_X,
+            **settings,
         )
         # compute relevant scores (skip newdummy)
         datasets = {

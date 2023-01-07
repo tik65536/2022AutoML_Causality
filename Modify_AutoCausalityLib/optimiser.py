@@ -224,10 +224,15 @@ class AutoCausality:
             )
             self.propensity_model.add_learner(learner_name='GPC', learner_class=gpClassifier)
         elif propensity_model == "dts":
+            # self.propensity_model = AutoML(
+            #     **{**self._settings["component_models"], "task": "classification","estimator_list":['DTS']}
+            # )
+            # self.propensity_model.add_learner(learner_name='DTS', learner_class=DTS)
             self.propensity_model = AutoML(
-                **{**self._settings["component_models"], "task": "classification","estimator_list":['DTS']}
-            )
+                **{**self._settings["component_models"]}
+                )
             self.propensity_model.add_learner(learner_name='DTS', learner_class=DTS)
+                
         elif hasattr(propensity_model, "fit") and hasattr(
             propensity_model, "predict_proba"
         ):
