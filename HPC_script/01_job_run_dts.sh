@@ -11,4 +11,5 @@
 module load python/3.8.6
 source venv/bin/activate
 
+cd $HOME/23_ExAutoML/2022AutoML_Causality
 python 01_autocausality_DTs.py

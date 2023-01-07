@@ -1,12 +1,8 @@
 slurm-*
 catboost*/
-<<<<<<< HEAD
-core*
-=======
-*.out
 
 
-# .ipynb_checkpoints
+# Jupyter notebook
 .ipynb_checkpoints
 
 # vscdoe setup
@@ -15,4 +11,7 @@ core*
 # venv
 .venv*
 venv*
->>>>>>> 030a392245d2e1db4f7396d2ecc712feb443740d
+
+# job output log
+*/*.out
+log

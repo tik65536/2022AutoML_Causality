@@ -27,6 +27,9 @@ from auto_causality.models.GaussianProcess import gpClassifier
 from auto_causality.data_utils import CausalityDataset
 from auto_causality.models.passthrough import feature_filter
 
+# Self add model
+from auto_causality.models.DTS import DTS
+
 
 # Patched from sklearn.linear_model._base to adjust rtol and atol values
 def _check_precomputed_gram_matrix(
@@ -220,6 +223,11 @@ class AutoCausality:
                 **{**self._settings["component_models"], "task": "classification","estimator_list":['GPC']}
             )
             self.propensity_model.add_learner(learner_name='GPC', learner_class=gpClassifier)
+        elif propensity_model == "dts":
+            self.propensity_model = AutoML(
+                **{**self._settings["component_models"], "task": "classification","estimator_list":['DTS']}
+            )
+            self.propensity_model.add_learner(learner_name='DTS', learner_class=DTS)
         elif hasattr(propensity_model, "fit") and hasattr(
             propensity_model, "predict_proba"
         ):
