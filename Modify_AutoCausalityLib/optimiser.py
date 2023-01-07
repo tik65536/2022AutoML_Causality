@@ -229,7 +229,7 @@ class AutoCausality:
             # )
             # self.propensity_model.add_learner(learner_name='DTS', learner_class=DTS)
             self.propensity_model = AutoML(
-                **{**self._settings["component_models"]}
+                **{**self._settings["component_models"], "task": "classification"}
                 )
             self.propensity_model.add_learner(learner_name='DTS', learner_class=DTS)
                 

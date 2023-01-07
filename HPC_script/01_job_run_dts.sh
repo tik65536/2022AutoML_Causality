@@ -2,7 +2,7 @@
 
 #SBATCH --partition=gpu
 #SBATCH --gres=gpu:1
-#SBATCH --job-name=causality_dts
+#SBATCH --job-name=at_cal_dts
 #SBATCH --mail-type=ALL
 #SBATCH --time 1-00:00:00
 #SBATCH --mem=20000
