@@ -15,6 +15,7 @@ from auto_causality.erupt import ERUPT
 from auto_causality.utils import treatment_values
 
 import dcor
+from scipy.special import kl_div
 
 
 class DummyEstimator:
@@ -164,7 +165,6 @@ class Scorer:
         select_cols = est._effect_modifier_names + ["yhat"]
 
         energy_distance_score = dcor.energy_distance(X1[select_cols], X0[select_cols])
-
         return energy_distance_score
 
     @staticmethod
@@ -289,13 +289,25 @@ class Scorer:
             # Debug Msg
             print(f'Scoring DF Columns: {df.columns}',flush=True)
             _model=self.psw_estimator.estimator.propensity_model
+            _propensity_param=_model._trained_estimator.get_params(True)
+            if(type(_model._trained_estimator).__name__=="MLP"):
+                _propensity_param['hiddenlayer']=_model._trained_estimator.model.hidden_layer_sizes
+                _propensity_param['activation']=_model._trained_estimator.model.activation
+                _propensity_param['alpha']=_model._trained_estimator.model.alpha
+            elif(type(_model._trained_estimator).__name__=="SVM"):
+                _propensity_param['nu']=_model._trained_estimator.model.nu
+                _propensity_param['kernel']=_model._trained_estimator.model.kernel
+                _propensity_param['degree']=_model._trained_estimator.model.degree
+                _propensity_param['gamma']=_model._trained_estimator.model.gamma
             name=None
             if(type(_model).__name__=="AutoML"):
-                print(f'Propensity Model : {type(_model._trained_estimator).__name__}',flush=True)
+                print(f'Propensity Model : {type(_model._trained_estimator).__name__} P:{_propensity_param}',flush=True)
                 name=type(_model._trained_estimator).__name__
             else:
                 print(f'Propensity Model : {type(_model).__name__}',flush=True)
             print(f'Propensity Model FeatureNumber: {_model.feature_names_in_}')
+            out['#_Propensity_model']=type(_model._trained_estimator).__name__
+            out['#_Propensity_model_param']=_propensity_param
             if isinstance(simple_ate, float):
                 # simple_ate = simple_ate[0]
                 # .reset_index(drop=True)
@@ -360,6 +372,7 @@ class Scorer:
 
         if "energy_distance" in metrics_to_report:
             out["energy_distance"] = Scorer.energy_distance_score(estimate, df)
+
 
         del df
         return out
