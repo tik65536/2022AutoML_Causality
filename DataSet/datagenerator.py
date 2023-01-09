@@ -11,7 +11,11 @@ for i in range(datacount+1):
     data_df=dataset.data
     train_df, test_df = train_test_split(data_df, test_size=test_size)
     test_df = test_df.reset_index(drop=True)
-    with open(f"./traindf_run_{i+1}.data", "wb") as f:
-        pickle.dump(train_df, f)
-    with open(f"./testdf_run_{i+1}.data", "wb") as f:
-        pickle.dump(test_df, f)
+    data={
+        'train_df':train_df,
+        'test_df':test_df,
+        'features_X':dataset.effect_modifiers,
+        'features_W':dataset.common_causes
+    }
+    with open(f"./dataset_run_{i+1}.data", "wb") as f:
+        pickle.dump(data, f)
