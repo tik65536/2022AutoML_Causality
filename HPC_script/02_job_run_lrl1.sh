@@ -8,9 +8,9 @@
 #SBATCH --mem=20000
 #SBATCH --output=R-%x.%j.out
 
-cd $HOME/23_ExAutoML/2022AutoML_Causality/main_py
-
+cd $HOME/23_ExAutoML/2022AutoML_Causality
 module load python/3.8.6
 source venv/bin/activate
 
+cd $HOME/23_ExAutoML/2022AutoML_Causality/main_py
 python 02_autocausality_LRL1.py
