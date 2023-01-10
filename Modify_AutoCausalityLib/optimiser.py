@@ -223,11 +223,26 @@ class AutoCausality:
                 **{**self._settings["component_models"], "task": "classification","estimator_list":['GPC']}
             )
             self.propensity_model.add_learner(learner_name='GPC', learner_class=gpClassifier)
+        # Decision Tree Estimator
         elif propensity_model == "dts":
             self.propensity_model = AutoML(
-                **{**self._settings["component_models"], "task": "classification","estimator_list":['DTS']}
+                **{**self._settings["component_models"], "task": "classification", "estimator_list":['DTS']}
             )
-            self.propensity_model.add_learner(learner_name='DTS', learner_class=DTS)
+        # Logistic Regression L1 Estimator
+        elif propensity_model == "logitl1":
+            self.propensity_model = AutoML(
+                **{**self._settings["component_models"], "task": "classification", "estimator_list":['logitl1']}
+            )
+        # Logistic Regression L2 Estimator
+        elif propensity_model == "logitl2":
+            self.propensity_model = AutoML(
+                **{**self._settings["component_models"], "task": "classification", "estimator_list":['logitl2']}
+            )
+        # Logistic Regression elasticnet Estimator
+        elif propensity_model == "logiten":
+            self.propensity_model = AutoML(
+                **{**self._settings["component_models"], "task": "classification", "estimator_list":['logiten']}
+            )  
         elif hasattr(propensity_model, "fit") and hasattr(
             propensity_model, "predict_proba"
         ):
