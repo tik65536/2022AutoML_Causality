@@ -12,9 +12,9 @@ test_size = 0.33  # equal train,val,test
 components_time_budget = 300
 estimator_list = "all"
 n_runs = 5
-out_dir = "./result/02_LREN/"
+out_dir = "./../result/02_LREN/"
 filename_out = "synthetic_observational_cate"
-datapath = "./DataSet/"
+datapath = "./../DataSet/"
 
 
 for i_run in range(1, n_runs+1):
@@ -23,7 +23,7 @@ for i_run in range(1, n_runs+1):
     construct train/val/test sets in 5 fixed dataset.
     """
     data = None
-    with open(f"{datapath}dataset_run_{i_run+1}.data", "rb") as f:
+    with open(f"{datapath}dataset_run_{i_run}.data", "rb") as f:
         data = pickle.load(f)
     train_df = data['train_df']
     test_df = data['test_df']
