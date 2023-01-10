@@ -2,8 +2,6 @@ import pickle
 import warnings
 
 from auto_causality import AutoCausality
-from auto_causality.datasets import generate_synthetic_data
-from sklearn.model_selection import train_test_split
 
 # suppress sklearn deprecation warnings for now..
 warnings.filterwarnings('ignore')
@@ -13,36 +11,32 @@ n_samples = 10000
 test_size = 0.33  # equal train,val,test
 components_time_budget = 300
 estimator_list = "all"
-n_runs = 1
-out_dir = "./02_LRL2/"
+n_runs = 5
+out_dir = "./result/02_LRL2/"
 filename_out = "synthetic_observational_cate"
+datapath = "./DataSet/"
 
-
-""" 1. Dataset generation and Preprocessing
-We apply AutoCausality's built-in preprocessing pipeline and construct train/val/test sets
-"""
-
-dataset = generate_synthetic_data(
-    n_samples=n_samples,
-    confounding=True,
-    linear_confounder=True,
-    noisy_outcomes=True)
-
-dataset.preprocess_dataset()
-features_X = dataset.effect_modifiers
-features_W = dataset.common_causes
-data_df = dataset.data
-print(f"features_X: {features_X}")
-print(f"features_W: {features_W}")
-
-"""2. Model fitting
-We're ready to find the best fitting model, given a user-specified metric. As we'd like to compare different metrics, we'll be doing this in a for-loop
-"""
 
 for i_run in range(1, n_runs+1):
+    """ 1. Dataset loading
+    We apply AutoCausality's built-in preprocessing pipeline and 
+    construct train/val/test sets in 5 fixed dataset.
+    """
+    data = None
+    with open(f"{datapath}dataset_run_{i_run+1}.data", "rb") as f:
+        data = pickle.load(f)
+    train_df = data['train_df']
+    test_df = data['test_df']
+    features_X = data['features_X']
+    features_W = data['features_W']
+    print(f"features_X: {features_X}")
+    print(f"features_W: {features_W}")
 
-    train_df, test_df = train_test_split(data_df, test_size=test_size)
-    test_df = test_df.reset_index(drop=True)
+    """ 2. Model fitting
+    We're ready to find the best fitting model, given a user-specified 
+    metric. As we'd like to compare different metrics, we'll be doing 
+    this in a for-loop.
+    """
     for metric in metrics:
         ac = AutoCausality(
             metric=metric,
@@ -71,7 +65,8 @@ for i_run in range(1, n_runs+1):
         # sort trials by validation set performance
         # assign trials to estimators
         estimator_scores = {est: []
-                            for est in ac.scores.keys() if "NewDummy" not in est}
+                            for est in ac.scores.keys()
+                            if "NewDummy" not in est}
         for trial in ac.results.trials:
             # estimator name:
             estimator_name = trial.last_result["estimator_name"]
@@ -94,6 +89,12 @@ for i_run in range(1, n_runs+1):
                     # add ground truth for convenience
                     scores[ds_name]["CATE_groundtruth"] = df["true_effect"]
                     scores[ds_name][metric] = est_scores[metric]
+                    try:
+                        scores[ds_name]['#_Propensity_model'] = est_scores['#_Propensity_model']
+                        scores[ds_name]['#_Propensity_Para'] = est_scores['#_Propensity_model_param']
+                        scores[ds_name]['values'] = est_scores['values']
+                    except KeyError:
+                        pass
                 estimator_scores[estimator_name].append(scores)
 
         # sort trials by validation performance
