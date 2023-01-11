@@ -13,5 +13,6 @@ catboost*/
 venv*
 
 # job output log
-*/*.out
+*.out
 log
+plot
