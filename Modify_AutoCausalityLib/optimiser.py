@@ -21,14 +21,15 @@ from auto_causality.scoring import Scorer
 from auto_causality.r_score import RScoreWrapper
 from auto_causality.utils import clean_config, treatment_is_multivalue
 from auto_causality.models.monkey_patches import AutoML
-from auto_causality.models.Bayesian import Bayesian
+from auto_causality.models.Bayesian import Gaussian
 from auto_causality.models.SVM import SVM
-from auto_causality.models.GaussianProcess import gpClassifier
+from auto_causality.models.GaussianProcess import GPC
+from auto_causality.models.DTS import DTC
+from auto_causality.models.DTS import ExTC
+from auto_causality.models.MLP import MLP
+from auto_causality.models.LogisticRegression import LR
 from auto_causality.data_utils import CausalityDataset
 from auto_causality.models.passthrough import feature_filter
-
-# Self add model
-from auto_causality.models.DTS import DTS
 
 
 # Patched from sklearn.linear_model._base to adjust rtol and atol values
@@ -208,41 +209,48 @@ class AutoCausality:
             self.propensity_model = AutoML(
                 **{**self._settings["component_models"], "task": "classification","estimator_list":['xgboost']}
             )
-        elif propensity_model == "gaussianNB":
+        elif propensity_model == "bayesian":
             self.propensity_model = AutoML(
-                **{**self._settings["component_models"], "task": "classification","estimator_list":['GaussianNB']}
+                **{**self._settings["component_models"], "task": "classification","estimator_list":['Gaussian']}
             )
-            self.propensity_model.add_learner(learner_name='GaussianNB', learner_class=Bayesian)
+            self.propensity_model.add_learner(learner_name='Gaussian', learner_class=Gaussian)
         elif propensity_model == "svm":
             self.propensity_model = AutoML(
                 **{**self._settings["component_models"], "task": "classification","estimator_list":['SVM']}
             )
             self.propensity_model.add_learner(learner_name='SVM', learner_class=SVM)
+        elif propensity_model == "mlp":
+            self.propensity_model = AutoML(
+                **{**self._settings["component_models"], "task": "classification","estimator_list":['MLP']}
+            )
+            self.propensity_model.add_learner(learner_name='MLP', learner_class=MLP)
         elif propensity_model == "gpc":
             self.propensity_model = AutoML(
                 **{**self._settings["component_models"], "task": "classification","estimator_list":['GPC']}
             )
-            self.propensity_model.add_learner(learner_name='GPC', learner_class=gpClassifier)
-        # Decision Tree Estimator
-        elif propensity_model == "dts":
+            self.propensity_model.add_learner(learner_name='GPC', learner_class=GPC)
+            #self.propensity_model.add_learner(learner_name='GPC', learner_class=GPC)
+        elif propensity_model == "dt":
             self.propensity_model = AutoML(
-                **{**self._settings["component_models"], "task": "classification", "estimator_list":['DTS']}
+                **{**self._settings["component_models"], "task": "classification","estimator_list":['DTC','ExTC']}
             )
-        # Logistic Regression L1 Estimator
-        elif propensity_model == "logitl1":
+            self.propensity_model.add_learner(learner_name='DTC', learner_class=DTC)
+            self.propensity_model.add_learner(learner_name='ExTC', learner_class=ExTC)
+        elif propensity_model == "lr":
             self.propensity_model = AutoML(
-                **{**self._settings["component_models"], "task": "classification", "estimator_list":['logitl1']}
+                **{**self._settings["component_models"], "task": "classification","estimator_list":['LR']}
             )
-        # Logistic Regression L2 Estimator
-        elif propensity_model == "logitl2":
+            self.propensity_model.add_learner(learner_name='LR', learner_class=LR)
+        elif propensity_model == "super":
             self.propensity_model = AutoML(
-                **{**self._settings["component_models"], "task": "classification", "estimator_list":['logitl2']}
+                **{**self._settings["component_models"], "task": "classification","estimator_list":['Gaussian','SVM','MLP','DTC','ExTC','LR']}
             )
-        # Logistic Regression elasticnet Estimator
-        elif propensity_model == "logiten":
-            self.propensity_model = AutoML(
-                **{**self._settings["component_models"], "task": "classification", "estimator_list":['logiten']}
-            )  
+            self.propensity_model.add_learner(learner_name='Gaussian', learner_class=Gaussian)
+            self.propensity_model.add_learner(learner_name='SVM', learner_class=SVM)
+            self.propensity_model.add_learner(learner_name='MLP', learner_class=MLP)
+            self.propensity_model.add_learner(learner_name='DTC', learner_class=DTC)
+            self.propensity_model.add_learner(learner_name='ExTC', learner_class=ExTC)
+            self.propensity_model.add_learner(learner_name='LR', learner_class=LR)
         elif hasattr(propensity_model, "fit") and hasattr(
             propensity_model, "predict_proba"
         ):
