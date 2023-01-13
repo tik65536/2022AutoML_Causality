@@ -1,6 +1,7 @@
 # 2022AutoML_Causality
 
 This github repo is for 2022 AutoML project on the topic of "Out-of-sample scoring and automatic selection of causal estimators"
+
 Here is the original paper for reference : https://arxiv.org/pdf/2212.10076.pdf
 
 # Repo Structure:
@@ -18,7 +19,9 @@ Here is the original paper for reference : https://arxiv.org/pdf/2212.10076.pdf
 1. Code Change in auto_causality lib :
    a. optimiser.py
       - The change is mainly in the init_propensity function to include those custom Model :
+      
         ex : 
+        
             elif propensity_model == "super":
             self.propensity_model = AutoML(
                 **{**self._settings["component_models"], "task": "classification","estimator_list":['Gaussian','SVM','MLP','DTC','ExTC','LR']}
@@ -32,7 +35,11 @@ Here is the original paper for reference : https://arxiv.org/pdf/2212.10076.pdf
             
    b. scoring.py
       - The Change here is main on capturing more result data for analysis 
-        ex : To capture the propensity model's HPO  
+      
+        ex :
+        
+        To capture the propensity model's HPO  
+        
             out['#_Propensity_model']=type(_model._trained_estimator).__name__
             out['#_Propensity_model_param']=_propensity_param
             
@@ -45,7 +52,8 @@ Here is the original paper for reference : https://arxiv.org/pdf/2212.10076.pdf
     - LogisticRegressionEstimator.py
     
 ## Result DataSet 
-As the result dataset is large in size (~410MB) , so it is put on google drive for access, it can be download from the link : 
+As the result dataset is large in size (~410MB) , so it is put on google drive for access, it can be download from the link :
+
 ResultData: https://drive.google.com/file/d/1BlBfDPVjoxWoiaWy0ajFu2u19aerikLi/view?usp=sharing
 
 After download, decompress it into result folder and modify the variable out_dir in the notebook.
